@@ -16,6 +16,10 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
+# Link pigpio library
+find_library(PIGPIO_LIB pigpio REQUIRED)
+find_library(RT_LIB rt REQUIRED)
+
 add_executable(listener_rate src/imu_subscriber_rate.cpp)
 ament_target_dependencies(listener_rate rclcpp sensor_msgs)
 
@@ -25,10 +29,20 @@ ament_target_dependencies(listener_az rclcpp sensor_msgs)
 add_executable(listener_az_timed src/imu_subscriber_az_echo_timed.cpp)
 ament_target_dependencies(listener_az_timed rclcpp sensor_msgs)
 
+add_executable(listener_az_led src/imu_subscriber_LED.cpp)
+target_link_libraries(listener_az_led pigpiod_if2)
+ament_target_dependencies(listener_az_led rclcpp sensor_msgs)
+
+add_executable(listener_az_led2 src/imu_subscriber_LED_pigpio.cpp)
+target_link_libraries(listener_az_led2 ${PIGPIO_LIB} ${RT_LIB})
+ament_target_dependencies(listener_az_led2 rclcpp sensor_msgs)
+
 install(TARGETS
   listener_rate
   listener_az
   listener_az_timed
+  listener_az_led
+  listener_az_led2
   DESTINATION lib/${PROJECT_NAME})
 
 ## END ADDED ---------------------
