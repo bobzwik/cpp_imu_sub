@@ -3,7 +3,7 @@
 ## For LED control
 
 ```
-git https://github.com/joan2937/pigpio
+git clone https://github.com/joan2937/pigpio
 cd pigpio
 make
 sudo make install
