@@ -3,10 +3,10 @@
 #include <pigpiod_if2.h>
 #include <chrono>
 
-class RateSubscriber : public rclcpp::Node
+class IMUReaderNode : public rclcpp::Node
 {
 public:
-    RateSubscriber()
+    IMUReaderNode()
         : Node("rate_subscriber"), led_on_until_(std::chrono::steady_clock::time_point::min())
     {
         // Initialize pigpiod_if2
@@ -24,10 +24,10 @@ public:
         auto qos = rclcpp::QoS(1).best_effort();
         subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
             "/ap/imu/experimental/data", qos,
-            std::bind(&RateSubscriber::topic_callback, this, std::placeholders::_1));
+            std::bind(&IMUReaderNode::topic_callback, this, std::placeholders::_1));
     }
 
-    ~RateSubscriber()
+    ~IMUReaderNode()
     {
         // Turn off the LED and stop pigpio
         gpio_write(pi_handle_, LED_GPIO_PIN, 0);
@@ -40,7 +40,7 @@ private:
         auto now = std::chrono::steady_clock::now();
 
         // Check if the z-axis acceleration exceeds the threshold
-        if (msg->linear_acceleration.z < -9.81)
+        if (msg->linear_acceleration.z < -10)
         {
             led_on_until_ = now + std::chrono::milliseconds(100); // Keep LED on for 100ms
             gpio_write(pi_handle_, LED_GPIO_PIN, 1);             // Turn LED on
@@ -63,7 +63,7 @@ private:
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<RateSubscriber>());
+    rclcpp::spin(std::make_shared<IMUReaderNode>());
     rclcpp::shutdown();
     return 0;
 }

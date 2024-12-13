@@ -15,6 +15,7 @@ find_package(ament_cmake REQUIRED)
 
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(mavros_msgs REQUIRED)
 
 # Link pigpio library
 find_library(PIGPIO_LIB pigpio REQUIRED)
@@ -37,12 +38,17 @@ add_executable(listener_az_led2 src/imu_subscriber_LED_pigpio.cpp)
 target_link_libraries(listener_az_led2 ${PIGPIO_LIB} ${RT_LIB})
 ament_target_dependencies(listener_az_led2 rclcpp sensor_msgs)
 
+add_executable(listener_az_led_mavros src/imu_subscriber_LED_mavros.cpp)
+target_link_libraries(listener_az_led_mavros pigpiod_if2)
+ament_target_dependencies(listener_az_led_mavros rclcpp sensor_msgs mavros_msgs)
+
 install(TARGETS
   listener_rate
   listener_az
   listener_az_timed
   listener_az_led
   listener_az_led2
+  listener_az_led_mavros
   DESTINATION lib/${PROJECT_NAME})
 
 ## END ADDED ---------------------
