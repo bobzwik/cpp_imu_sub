@@ -40,7 +40,7 @@ private:
         auto now = std::chrono::steady_clock::now();
 
         // Check if the z-axis acceleration exceeds the threshold
-        if (msg->linear_acceleration.z > 10)
+        if (msg->linear_acceleration.z < -10)
         {
             led_on_until_ = now + std::chrono::milliseconds(100); // Keep LED on for 100ms
             gpio_write(pi_handle_, LED_GPIO_PIN, 1);             // Turn LED on
