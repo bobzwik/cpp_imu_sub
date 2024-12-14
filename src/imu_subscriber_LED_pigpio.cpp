@@ -43,7 +43,7 @@ private:
         double z_acceleration = msg->linear_acceleration.z;
         auto now = std::chrono::steady_clock::now();
 
-        if (z_acceleration < -9.81)
+        if (z_acceleration > 9.81)
         {
             // Turn on the LED and reset the timer
             gpioWrite(LED_PIN, PI_HIGH);
